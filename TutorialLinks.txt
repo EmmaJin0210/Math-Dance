@@ -1,0 +1,9 @@
+Playlist: https://www.youtube.com/playlist?list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K
+
+Installing OpenCV: https://www.youtube.com/watch?v=d3AT9EGp4iw&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=2
+Read/show videos: https://www.youtube.com/watch?v=-RtVZsCvXAQ&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=5
+Object detection&tracking: https://www.youtube.com/watch?v=3D7O_kZi8-o&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=14
+Motion detection&tracking: https://www.youtube.com/watch?v=MkcUgPhOlP8&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=28
+Tracking objects: https://www.youtube.com/watch?v=1FJWXOO1SRI
+
+OpenCV Python tutorial: https://www.geeksforgeeks.org/opencv-python-tutorial/
