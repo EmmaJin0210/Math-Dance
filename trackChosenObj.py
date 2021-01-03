@@ -1,15 +1,16 @@
 """
 Use CSRT tracker to let user choose object and track that object
-returns: list of coordinates indicating the change in position of chosen object
--------------------------------------------------------------------------------
-Emma Jin, created 2020.1.3
--------------------------------------------------------------------------------
-Tutorials used:
-https://www.youtube.com/watch?v=1FJWXOO1SRI
-https://www.youtube.com/watch?v=-RtVZsCvXAQ&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=5
--------------------------------------------------------------------------------
-link to download video: https://www.pexels.com/video/black-and-white-video-of-people-853889/
+prints: list of coordinates indicating the change in position of chosen object
 """
+#-------------------------------------------------------------------------------
+#Emma Jin, created 2020.1.3
+#-------------------------------------------------------------------------------
+#Tutorials used:
+#https://www.youtube.com/watch?v=1FJWXOO1SRI
+#https://www.youtube.com/watch?v=-RtVZsCvXAQ&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=5
+#-------------------------------------------------------------------------------
+#link to download video: https://www.pexels.com/video/black-and-white-video-of-people-853889/
+
 
 import cv2
 

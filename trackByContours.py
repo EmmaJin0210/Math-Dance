@@ -1,15 +1,16 @@
 """
 Detects people moving in video through contour curves
-returns: list of coordinates of all detected moving objects
--------------------------------------------------------------------------------
-Emma Jin, created 2020.1.3
--------------------------------------------------------------------------------
-Tutorials used:
-https://www.youtube.com/watch?v=-RtVZsCvXAQ&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=5
-https://www.youtube.com/watch?v=MkcUgPhOlP8&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=28
--------------------------------------------------------------------------------
-link to download video: https://www.pexels.com/video/black-and-white-video-of-people-853889/
+prints: list of coordinates of all detected moving objects
 """
+#-------------------------------------------------------------------------------
+#Emma Jin, created 2020.1.3
+#-------------------------------------------------------------------------------
+#Tutorials used:
+#https://www.youtube.com/watch?v=-RtVZsCvXAQ&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=5
+#https://www.youtube.com/watch?v=MkcUgPhOlP8&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=28
+#-------------------------------------------------------------------------------
+#link to download video: https://www.pexels.com/video/black-and-white-video-of-people-853889/
+
 
 import cv2
 import numpy as np
