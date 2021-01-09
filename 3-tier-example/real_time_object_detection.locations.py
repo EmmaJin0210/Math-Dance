@@ -10,7 +10,7 @@
 #    --model MobileNetSSD_deploy.caffemodel \
 #    --video <filename of mp4 video file>
 # Or one one line for copy/paste:
-# python real_time_object_detection.py --prototxt MobileNetSSD_deploy.prototxt.txt --model MobileNetSSD_deploy.caffemodel --video <filename of mp4 video file>
+# python real_time_object_detection.locations.py --prototxt MobileNetSSD_deploy.prototxt.txt --model MobileNetSSD_deploy.caffemodel --video <filename of mp4 video file>
 # Use savefrom.net to get YouTube video
 # Use online-video-cutter.com
 # Imports
