@@ -4,6 +4,11 @@ prints: list of coordinates of all detected moving objects
 """
 #-------------------------------------------------------------------------------
 #Emma Jin, created 2020.1.3
+#Tom Harris, trying on captured animation 16-Jan-2021
+#    animation from:
+#    http://www.datapointed.net/visualizations/math/factorization/animated-diagrams/
+#    captured using (10-day free trial)
+#    https://www.flashbackrecorder.com/
 #-------------------------------------------------------------------------------
 #Tutorials used:
 #https://www.youtube.com/watch?v=-RtVZsCvXAQ&list=PLS1QulWo1RIa7D1O6skqDQ-JZ1GGHKK-K&index=5
@@ -15,11 +20,14 @@ prints: list of coordinates of all detected moving objects
 import cv2
 import numpy as np
 
-size = int(input("What is the approximate size of people in the video? "))
+# instead of hard-coding video file name
+videoFileName = input("What is the name of the video file to process? ")
+
 # gets approximate size of people in video to avoid rectangles being too small
+size = int(input("What is the approximate size of people in the video? "))
 coords = []
 
-cap = cv2.VideoCapture('peoplewalking.mp4')
+cap = cv2.VideoCapture(videoFileName) # Tom Harris updated video filename to take from user input
 
 success, frame1 = cap.read()
 success, frame2 = cap.read()
