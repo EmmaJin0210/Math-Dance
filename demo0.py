@@ -22,17 +22,8 @@ def showRects(frame, rects):
     return frame
 
 def showCoords(frame, coord):
-    coord = tuple(int(item) for item in coord)
     cv2.circle(frame, coord, radius=10, color=(0, 0, 255), thickness=2)
     return frame
-
-def showDensity(frame, density):
-    cv2.putText(frame,"density:%.2f"%(density), (50,50),cv2.FONT_HERSHEY_SIMPLEX,\
-                1, (255,0,0), 2, cv2.LINE_AA)
-    return frame
-
-def showCentroid(frame, coords):
-    pass
 
 ################################## DATA TIER ###################################
 def getCoords(frame, hog):
@@ -57,11 +48,9 @@ def calcArea(coordlayer):
         correction = X[-1] * Y[0] - Y[-1]* X[0]
         main_area = np.dot(X[:-1], Y[1:]) - np.dot(Y[:-1], X[1:])
         area = 0.5*np.abs(main_area + correction)
+        print(area)
         return area
     return 0
-
-def calcAreaBox(coordlayer):
-    pass
 
 def calcDensity(coordlayer, area):
     if len(coordlayer) > 0:
@@ -69,8 +58,6 @@ def calcDensity(coordlayer, area):
         return density
     return 0
 
-def calcDensityBox(coordlayer, area):
-    pass
 #--------------------------------helper funcs-----------------------------------
 def getCenter(coords):
     center = tuple(map(operator.truediv, reduce(lambda x, y: map(operator.add, \
@@ -90,16 +77,13 @@ def main():
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
     cv2.startWindowThread()
-    cap = cv2.VideoCapture("peoplewalking.mp4")
+    cap = cv2.VideoCapture(0) #connects to default camera of pc
 
     while cap.isOpened():
         success, frame = cap.read()
         frame, coordlayer = getCoords(frame,hog)
-        center = getCenter(coordlayer)
-        frame = showCoords(frame,center)
         area = calcArea(coordlayer)
         density = calcDensity(coordlayer,area)
-        frame = showDensity(frame, density)
         cv2.imshow('testvideo', frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
