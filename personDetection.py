@@ -5,6 +5,7 @@ Emma Jin   created: 2021/1/10
 tutorial used: https://thedatafrog.com/en/articles/human-detection-video/
 https://stackoverflow.com/questions/51074984/sorting-according-to-clockwise-point-coordinates/51075469
 https://stackoverflow.com/questions/24467972/calculate-area-of-polygon-given-x-y-coordinates
+https://stackoverflow.com/questions/14452145/how-to-measure-time-taken-between-lines-of-code-in-python
 
 """
 
@@ -13,7 +14,7 @@ import numpy as np
 from functools import reduce
 import operator
 import math
-
+import time
 
 ############################## PRESENTATION TIER ###############################
 def showRects(frame, rects):
@@ -26,17 +27,22 @@ def showCoords(frame, coord):
     cv2.circle(frame, coord, radius=10, color=(0, 0, 255), thickness=2)
     return frame
 
-def showDensity(frame, density):
-    cv2.putText(frame,"density:%.2f"%(density), (50,50),cv2.FONT_HERSHEY_SIMPLEX,\
+def showFeature(frame, s, data, pos):
+    cv2.putText(frame,"%s:%.2f"%(s,data), pos, cv2.FONT_HERSHEY_SIMPLEX,\
                 1, (255,0,0), 2, cv2.LINE_AA)
     return frame
 
 def showCentroid(frame, coords):
-    pass
+    coords = sortCoordsClws(coords)
+    coords = np.asarray(coords)
+    coords = coords.reshape((-1,1,2))
+    frame = cv2.polylines(frame,[coords],True,(0,255,255))
+    return frame
+
 
 ################################## DATA TIER ###################################
 def getCoords(frame, hog):
-    frame = cv2.resize(frame, (720, 480))
+    frame = cv2.resize(frame, (1080, 720))
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = getRects(frame,hog)
     frame = showRects(frame, rects)
@@ -47,6 +53,15 @@ def getRects(frame, hog):
     rects, _ = hog.detectMultiScale(frame, winStride=(8,8))
     rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
     return rects
+
+def getCenter(coords):
+    s = coords.shape
+    sums = np.sum(coords, axis=0)
+    cx = sums[0]/s[0]
+    cy = sums[1]/s[0]
+    return (cx,cy)
+
+
 ############################# APPLICATION TIER #################################
 def calcArea(coordlayer):
     if len(coordlayer) > 2:
@@ -60,25 +75,25 @@ def calcArea(coordlayer):
         return area
     return 0
 
-def calcAreaBox(coordlayer):
-    pass
-
 def calcDensity(coordlayer, area):
     if len(coordlayer) > 0:
         density = area/len(coordlayer)
         return density
     return 0
 
-def calcDensityBox(coordlayer, area):
-    pass
+def calcAveVelocity(center1, center2, delta_t):
+    dist = math.hypot(center2[0]-center1[0], center2[1]-center1[1])
+    v = dist/delta_t
+    return v
+
 #--------------------------------helper funcs-----------------------------------
-def getCenter(coords):
+def getRotationCenter(coords):
     center = tuple(map(operator.truediv, reduce(lambda x, y: map(operator.add, \
             x, y), coords), [len(coords)] * 2))
     return center
 
 def sortCoordsClws(coords):
-    center = getCenter(coords)
+    center = getRotationCenter(coords)
     s_coords = sorted(coords, key=lambda coord: (-135 - math.degrees(\
             math.atan2(*tuple(map(operator.sub, coord, center))[::-1]))) % 360)
     return s_coords
@@ -91,16 +106,28 @@ def main():
 
     cv2.startWindowThread()
     cap = cv2.VideoCapture("peoplewalking.mp4")
-
+    #cap = cv2.VideoCapture(0) #number could vary depending on camera
+    oldcenter = None #
     while cap.isOpened():
         success, frame = cap.read()
         frame, coordlayer = getCoords(frame,hog)
         center = getCenter(coordlayer)
+        end = time.time() #
         frame = showCoords(frame,center)
         area = calcArea(coordlayer)
         density = calcDensity(coordlayer,area)
-        frame = showDensity(frame, density)
+        frame = showFeature(frame,"density",density,(50,50))
+        frame = showCentroid(frame,coordlayer)
+
+        if oldcenter != None:
+            aveVelocity = calcAveVelocity(oldcenter,center,end-start)
+            frame = showFeature(frame,"ave. velocity",aveVelocity,(50,100))
+
+        start = time.time() #
+        oldcenter = center #
+
         cv2.imshow('testvideo', frame)
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
