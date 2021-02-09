@@ -36,6 +36,8 @@ while cap.isOpened():
 
         #######################DRAW RECTANGLES######################
         for contour in contours:
+            # each contour is a Numpy array of (x,y) coordinates of the boundary
+            # points of the object
             (x, y, w, h) = cv2.boundingRect(contour)
             if cv2.contourArea(contour) < size:
                 continue
