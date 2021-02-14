@@ -95,6 +95,9 @@ def getCenter(coords):
     cy = sums[1]/s[0]
     return (cx,cy)
 
+def getCenterContour(coords):
+    pass
+
 def getBoundingRect(coordlayer):
     """
     get bounding rectangle using cv2.contours given a list of coordinates
