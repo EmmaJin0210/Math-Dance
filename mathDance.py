@@ -6,6 +6,7 @@ tutorials used: https://thedatafrog.com/en/articles/human-detection-video/
 https://stackoverflow.com/questions/51074984/sorting-according-to-clockwise-point-coordinates/51075469
 https://stackoverflow.com/questions/24467972/calculate-area-of-polygon-given-x-y-coordinates
 https://stackoverflow.com/questions/14452145/how-to-measure-time-taken-between-lines-of-code-in-python
+https://zetcode.com/python/argparse/
 """
 import cv2
 import numpy as np
@@ -13,6 +14,14 @@ from functools import reduce
 import operator
 import math
 import time
+import argparse as ap
+
+############################## COMMAND LINE ARGUMENTS ##########################
+parser = ap.ArgumentParser()
+parser.add_argument('-f', '--filename', default='peoplewalking.mp4', \
+    help='specify the path and filename of input video file')
+args = parser.parse_args()
+filename = args.filename
 
 ############################## PRESENTATION TIER ###############################
 def showRects(frame, rects):
@@ -149,7 +158,7 @@ def main():
     hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
     cv2.startWindowThread()
-    cap = cv2.VideoCapture("peoplewalking.mp4")
+    cap = cv2.VideoCapture(filename)
     #cap = cv2.VideoCapture(0) #number could vary depending on camera
     oldcenter = None #
     while cap.isOpened():
