@@ -18,7 +18,7 @@ import argparse as ap
 
 ############################## COMMAND LINE ARGUMENTS ##########################
 parser = ap.ArgumentParser()
-parser.add_argument('-f', '--filename', default='peoplewalking.mp4', \
+parser.add_argument('-v', '--filename', default='peoplewalking.mp4', \
     help='specify the path and filename of input video file')
 args = parser.parse_args()
 filename = args.filename
