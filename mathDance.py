@@ -84,6 +84,10 @@ def getRects(frame, hog):
     rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
     return rects
 
+def getCenterContour(coords):
+    pass
+
+############################# APPLICATION TIER #################################
 def getCenter(coords):
     """
     get the center of a set of coordinates
@@ -95,9 +99,6 @@ def getCenter(coords):
     cy = sums[1]/s[0]
     return (cx,cy)
 
-def getCenterContour(coords):
-    pass
-
 def getBoundingRect(coordlayer):
     """
     get bounding rectangle using cv2.contours given a list of coordinates
@@ -106,7 +107,6 @@ def getBoundingRect(coordlayer):
     rect = (x,y,x+w,y+h)
     return [rect]
 
-############################# APPLICATION TIER #################################
 def calcArea(coordlayer):
     """
     calculate the area of the polygon connected by a set of coordinates
