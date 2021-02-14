@@ -62,7 +62,7 @@ def getCoords(frame, hog):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = getRects(frame,hog)
     frame = showRects(frame, rects)
-    coords = np.array([[int(x+w/2), int(y+h/2)] for (x,y,w,h) in rects])
+    coords = np.array([[int((x1+x2)/2), int((y1+y2)/2)] for (x1,y1,x2,y2) in rects])
     return frame, coords
 
 def getRects(frame, hog):
@@ -112,10 +112,8 @@ def calcDensity(coordlayer, area):
     """
     calculate the density of dancers in the space bounded by the polygon
     """
-    if len(coordlayer) > 0:
-        density = area/len(coordlayer)
-        return density
-    return 0
+    density = area/len(coordlayer)
+    return density
 
 def calcAveVelocity(center1, center2, delta_t):
     """
@@ -156,21 +154,24 @@ def main():
     oldcenter = None #
     while cap.isOpened():
         success, frame = cap.read()
+        if not success:
+            raise ValueError("Failed to read frame.")
         frame, coordlayer = getCoords(frame,hog)
-        center = getCenter(coordlayer)
-        end = time.time() #
-        frame = showCoords(frame,center)
-        area = calcArea(coordlayer)
-        density = calcDensity(coordlayer,area)
-        frame = showFeature(frame,"density",density,(50,50))
-        frame = showCentroid(frame,coordlayer)
+        if coordlayer.size != 0:
+            center = getCenter(coordlayer)
+            end = time.time() #
+            frame = showCoords(frame,center)
+            area = calcArea(coordlayer)
+            density = calcDensity(coordlayer,area)
+            frame = showFeature(frame,"density",density,(50,50))
+            frame = showCentroid(frame,coordlayer)
 
-        if oldcenter != None:
-            aveVelocity = calcAveVelocity(oldcenter,center,end-start)
-            frame = showFeature(frame,"ave. velocity",aveVelocity,(50,100))
+            if oldcenter != None:
+                aveVelocity = calcAveVelocity(oldcenter,center,end-start)
+                frame = showFeature(frame,"ave. velocity",aveVelocity,(50,100))
 
-        start = time.time() #
-        oldcenter = center #
+            start = time.time() #
+            oldcenter = center #
 
         cv2.imshow('testvideo', frame)
 
