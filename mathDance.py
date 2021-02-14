@@ -48,9 +48,9 @@ def showFeature(frame, s, data, pos):
                 1, (255,0,0), 2, cv2.LINE_AA)
     return frame
 
-def showCentroid(frame, coords):
+def showPolygon(frame, coords):
     """
-    display the centroid given a set of coordinates
+    display the polygon connecting a set of coordinates
     """
     coords = sortCoordsClws(coords)
     coords = np.asarray(coords)
@@ -183,7 +183,7 @@ def main():
             area = calcArea(coordlayer)
             density = calcDensity(coordlayer,area)
             frame = showFeature(frame,"density",density,(50,50))
-            frame = showCentroid(frame,coordlayer)
+            frame = showPolygon(frame,coordlayer)
 
             if oldcenter != None:
                 aveVelocity = calcAveVelocity(oldcenter,center,end-start)
