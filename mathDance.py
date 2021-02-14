@@ -24,12 +24,12 @@ args = parser.parse_args()
 filename = args.filename
 
 ############################## PRESENTATION TIER ###############################
-def showRects(frame, rects):
+def showRects(frame, rects, color):
     """
     display rectangles in frame given the rectangles' vertices
     """
     for (p1,p2,p3,p4) in rects:
-        cv2.rectangle(frame, (p1,p2), (p3,p4), (0,255,0), 2)
+        cv2.rectangle(frame, (p1,p2), (p3,p4), color, 2)
     return frame
 
 def showCoords(frame, coord):
@@ -70,7 +70,7 @@ def getCoords(frame, hog):
     frame = cv2.resize(frame, (1080, 720))
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = getRects(frame,hog)
-    frame = showRects(frame, rects)
+    frame = showRects(frame, rects, (0,255,0))
     coords = np.array([[int((x1+x2)/2), int((y1+y2)/2)] for (x1,y1,x2,y2) in rects])
     return frame, coords
 
@@ -95,11 +95,13 @@ def getCenter(coords):
     cy = sums[1]/s[0]
     return (cx,cy)
 
-def getBoundingRect():
+def getBoundingRect(coordlayer):
     """
     get bounding rectangle using cv2.contours given a list of coordinates
     """
-    pass
+    x,y,w,h = cv2.boundingRect(coordlayer)
+    rect = (x,y,x+w,y+h)
+    return [rect]
 
 ############################# APPLICATION TIER #################################
 def calcArea(coordlayer):
@@ -116,6 +118,9 @@ def calcArea(coordlayer):
         area = 0.5*np.abs(main_area + correction)
         return area
     return 0
+
+def calcAreaContour(coordlayer):
+    pass
 
 def calcDensity(coordlayer, area):
     """
@@ -167,6 +172,8 @@ def main():
             raise ValueError("Failed to read frame.")
         frame, coordlayer = getCoords(frame,hog)
         if coordlayer.size != 0:
+            boundingrect = getBoundingRect(coordlayer)
+            frame = showRects(frame, boundingrect, (255,255,0))
             center = getCenter(coordlayer)
             end = time.time() #
             frame = showCoords(frame,center)
