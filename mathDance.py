@@ -67,7 +67,7 @@ def getCoords(frame, hog):
     get the coords of detected dancers in a certain frame
     returns: coords, a numpy array of two-element-lists, each representing a coord
     """
-    frame = cv2.resize(frame, (1080, 720))
+    frame = cv2.resize(frame, (1080, 720)) # failing to read in the last frame
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = getRects(frame,hog)
     frame = showRects(frame, rects, (0,255,0))
@@ -80,9 +80,16 @@ def getRects(frame, hog):
     rectangles around dancers
     returns: rects, a numpy array of four-element-lists, each a vertex
     """
-    rects, _ = hog.detectMultiScale(frame, winStride=(8,8))
+    rects, _ = hog.detectMultiScale(frame, winStride=(8,8)) #play with this and the resize?
     rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
     return rects
+
+def checkRects(rects):
+    """
+    delete any rectangles that are surrounding multiple other rectangles
+    returns: array of the remaining smaller rectangles
+    """
+    pass
 
 def getCenterContour(coords):
     pass
@@ -169,10 +176,11 @@ def main():
     cap = cv2.VideoCapture(filename)
     #cap = cv2.VideoCapture(0) #number could vary depending on camera
     oldcenter = None #
+    framecount = 1
     while cap.isOpened():
         success, frame = cap.read()
         if not success:
-            raise ValueError("Failed to read frame.")
+            print("Failed to read frame %d" %framecount)
         frame, coordlayer = getCoords(frame,hog)
         if coordlayer.size != 0:
             boundingrect = getBoundingRect(coordlayer)
@@ -193,6 +201,7 @@ def main():
             oldcenter = center #
 
         cv2.imshow('testvideo', frame)
+        framecount += 1
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
