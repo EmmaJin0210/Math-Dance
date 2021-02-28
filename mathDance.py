@@ -100,7 +100,7 @@ def getRects(frame, hog):
     return rects
 
 def getRects_init(frame, hog):
-    rects, _ = hog.detectMultiScale(frame, winStride=(4,12)) #play with this and the resize?
+    rects, _ = hog.detectMultiScale(frame, winStride=(4,8)) #play with this and the resize?
     return rects
 
 def checkRects(rects):
