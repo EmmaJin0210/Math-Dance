@@ -54,6 +54,7 @@ def showCoords(frame, coord):
 def showFeature(frame, s, data, pos_w = POS_LEFT, pos_h = POS_HIGH, pos_num = None):
     """
     display a certain feature in frame given the feature's name, data, and position
+    (pos_num is a tuple in the form of (x,y))
     """
     if pos_num != None:
         pos = pos_num
@@ -215,7 +216,8 @@ def main():
 
                 if oldcenter != None:
                     aveVelocity = calcAveVelocity(oldcenter,center,end-start)
-                    frame = showFeature(frame,"ave. velocity",aveVelocity,pos_num=(50,100))
+                    frame = showFeature(frame,"ave. velocity",aveVelocity,\
+                    pos_num=(WIDTH//20,HEIGHT//8))
 
                 start = time.time() #
                 oldcenter = center #
