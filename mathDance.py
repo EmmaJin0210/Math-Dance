@@ -16,12 +16,23 @@ import math
 import time
 import argparse as ap
 
+################################# CONSTANTS ####################################
+WIDTH = 1080
+HEIGHT = 720
+
+POS_HIGH = HEIGHT // 15
+POS_MID = POS_HIGH + HEIGHT // 3
+POS_LOW = POS_MID + HEIGHT // 3
+POS_LEFT = WIDTH // 20
+POS_CENTER = POS_LEFT + WIDTH // 3
+POS_RIGHT = POS_CENTER + WIDTH // 3
 ############################## COMMAND LINE ARGUMENTS ##########################
 parser = ap.ArgumentParser()
 parser.add_argument('-v', '--filename', default='peoplewalking.mp4', \
     help='specify the path and filename of input video file')
 args = parser.parse_args()
 filename = args.filename
+print(filename)
 
 ############################## PRESENTATION TIER ###############################
 def showRects(frame, rects, color):
@@ -40,10 +51,14 @@ def showCoords(frame, coord):
     cv2.circle(frame, coord, radius=10, color=(0, 0, 255), thickness=2)
     return frame
 
-def showFeature(frame, s, data, pos):
+def showFeature(frame, s, data, pos_w = POS_LEFT, pos_h = POS_HIGH, pos_num = None):
     """
     display a certain feature in frame given the feature's name, data, and position
     """
+    if pos_num != None:
+        pos = pos_num
+    else:
+        pos = (pos_w, pos_h)
     cv2.putText(frame,"%s:%.2f"%(s,data), pos, cv2.FONT_HERSHEY_SIMPLEX,\
                 1, (255,0,0), 2, cv2.LINE_AA)
     return frame
@@ -67,7 +82,7 @@ def getCoords(frame, hog):
     get the coords of detected dancers in a certain frame
     returns: coords, a numpy array of two-element-lists, each representing a coord
     """
-    frame = cv2.resize(frame, (1080, 720)) # failing to read in the last frame
+    frame = cv2.resize(frame, (1080, 720))
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = getRects(frame,hog)
     frame = showRects(frame, rects, (0,255,0))
@@ -80,8 +95,12 @@ def getRects(frame, hog):
     rectangles around dancers
     returns: rects, a numpy array of four-element-lists, each a vertex
     """
-    rects, _ = hog.detectMultiScale(frame, winStride=(8,8)) #play with this and the resize?
+    rects = getRects_init(frame, hog)
     rects = np.array([[x,y,x+w,y+h] for (x,y,w,h) in rects])
+    return rects
+
+def getRects_init(frame, hog):
+    rects, _ = hog.detectMultiScale(frame, winStride=(4,12)) #play with this and the resize?
     return rects
 
 def checkRects(rects):
@@ -89,6 +108,8 @@ def checkRects(rects):
     delete any rectangles that are surrounding multiple other rectangles
     returns: array of the remaining smaller rectangles
     """
+    #for rect in rects:
+        #if rect[2] > WIDTH//2 or rect[3] > HEIGHT//2
     pass
 
 def getCenterContour(coords):
@@ -179,28 +200,34 @@ def main():
     framecount = 1
     while cap.isOpened():
         success, frame = cap.read()
-        if not success:
+        if success:
+            frame, coordlayer = getCoords(frame,hog)
+            if coordlayer.size != 0:
+                boundingrect = getBoundingRect(coordlayer)
+                frame = showRects(frame, boundingrect, (255,255,0))
+                center = getCenter(coordlayer)
+                end = time.time() #
+                frame = showCoords(frame,center)
+                area = calcArea(coordlayer)
+                density = calcDensity(coordlayer,area)
+                frame = showFeature(frame,"density",density)
+                frame = showPolygon(frame,coordlayer)
+
+                if oldcenter != None:
+                    aveVelocity = calcAveVelocity(oldcenter,center,end-start)
+                    frame = showFeature(frame,"ave. velocity",aveVelocity,pos_num=(50,100))
+
+                start = time.time() #
+                oldcenter = center #
+
+            cv2.imshow('testvideo', frame)
+        else:
             print("Failed to read frame %d" %framecount)
-        frame, coordlayer = getCoords(frame,hog)
-        if coordlayer.size != 0:
-            boundingrect = getBoundingRect(coordlayer)
-            frame = showRects(frame, boundingrect, (255,255,0))
-            center = getCenter(coordlayer)
-            end = time.time() #
-            frame = showCoords(frame,center)
-            area = calcArea(coordlayer)
-            density = calcDensity(coordlayer,area)
-            frame = showFeature(frame,"density",density,(50,50))
-            frame = showPolygon(frame,coordlayer)
-
-            if oldcenter != None:
-                aveVelocity = calcAveVelocity(oldcenter,center,end-start)
-                frame = showFeature(frame,"ave. velocity",aveVelocity,(50,100))
-
-            start = time.time() #
-            oldcenter = center #
-
-        cv2.imshow('testvideo', frame)
+            # if keeps detecting continuous failed frames, break since we reached
+            # the end of the video?
+            if framecount == old_framecount + 1:
+                break
+        old_framecount = framecount
         framecount += 1
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
