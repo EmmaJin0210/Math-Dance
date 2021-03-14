@@ -32,6 +32,8 @@ GREEN = (0,255,0)
 RED = (0,0,255)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+CYAN = (255,255,0)
+YELLOW = (0,255,255)
 ############################## COMMAND LINE ARGUMENTS ##########################
 parser = ap.ArgumentParser()
 parser.add_argument('-v', '--filename', default='peoplewalking.mp4', \
@@ -77,7 +79,7 @@ def showPolygon(frame, coords):
     coords = sortCoordsClws(coords)
     coords = np.asarray(coords)
     coords = coords.reshape((-1,1,2))
-    frame = cv2.polylines(frame,[coords],True,(0,255,255))
+    frame = cv2.polylines(frame,[coords],True,YELLOW)
     return frame
 
 def showContours():
@@ -211,7 +213,7 @@ def main():
             frame, coordlayer = getCoords(frame,hog)
             if coordlayer.size != 0:
                 boundingrect = getBoundingRect(coordlayer)
-                frame = showRects(frame, boundingrect, (255,255,0))
+                frame = showRects(frame, boundingrect, CYAN)
                 center = getCenter(coordlayer)
                 end = time.time() #
                 frame = showCoords(frame,center)
