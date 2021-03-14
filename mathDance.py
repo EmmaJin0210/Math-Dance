@@ -26,6 +26,12 @@ POS_LOW = POS_MID + HEIGHT // 3
 POS_LEFT = WIDTH // 20
 POS_CENTER = POS_LEFT + WIDTH // 3
 POS_RIGHT = POS_CENTER + WIDTH // 3
+
+BLUE = (255,0,0)
+GREEN = (0,255,0)
+RED = (0,0,255)
+BLACK = (0,0,0)
+WHITE = (255,255,255)
 ############################## COMMAND LINE ARGUMENTS ##########################
 parser = ap.ArgumentParser()
 parser.add_argument('-v', '--filename', default='peoplewalking.mp4', \
@@ -48,7 +54,7 @@ def showCoords(frame, coord):
     display a point in frame given its coordinate
     """
     coord = tuple(int(item) for item in coord)
-    cv2.circle(frame, coord, radius=10, color=(0, 0, 255), thickness=2)
+    cv2.circle(frame, coord, radius=10, color=RED, thickness=2)
     return frame
 
 def showFeature(frame, s, data, pos_w = POS_LEFT, pos_h = POS_HIGH, pos_num = None):
@@ -61,7 +67,7 @@ def showFeature(frame, s, data, pos_w = POS_LEFT, pos_h = POS_HIGH, pos_num = No
     else:
         pos = (pos_w, pos_h)
     cv2.putText(frame,"%s:%.2f"%(s,data), pos, cv2.FONT_HERSHEY_SIMPLEX,\
-                1, (255,0,0), 2, cv2.LINE_AA)
+                1, BLUE, 2, cv2.LINE_AA)
     return frame
 
 def showPolygon(frame, coords):
@@ -86,7 +92,7 @@ def getCoords(frame, hog):
     frame = cv2.resize(frame, (1080, 720))
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rects = getRects(frame,hog)
-    frame = showRects(frame, rects, (0,255,0))
+    frame = showRects(frame, rects, GREEN)
     coords = np.array([[int((x1+x2)/2), int((y1+y2)/2)] for (x1,y1,x2,y2) in rects])
     return frame, coords
 
